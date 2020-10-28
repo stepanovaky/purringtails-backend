@@ -3,13 +3,18 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const { NODE_ENV } = require('./config')
 const jwt = require('jsonwebtoken');
 const { DATABASE_URL } = require('./config');
 const knex = require('knex');
 const userRouter = require('./user-route');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+const { NODE_ENV } = require('./config')
+const UserService = require('./user-service');
+const { v4: uuidv4 } = require('uuid');
+const { serializeUser } = require('./user-service');
+const scheduleRouter = require('./schedule-route')
 
+
+pem = "-----BEGIN CERTIFICATE-----\nMIIDJjCCAg6gAwIBAgIIJd035gvRHpswDQYJKoZIhvcNAQEFBQAwNjE0MDIGA1UE\nAxMrZmVkZXJhdGVkLXNpZ25vbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTAe\nFw0yMDEwMjMwNDI5NDVaFw0yMDExMDgxNjQ0NDVaMDYxNDAyBgNVBAMTK2ZlZGVy\nYXRlZC1zaWdub24uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wggEiMA0GCSqG\nSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvVj+9WMlM2nCAoMXH/5am06q8E+KK8NTz\n+LkFGJUluU6sofmUzteEk79k/U0MCpYSYooD2PDfbVF7s8SiA+FJmrIIBKLC583r\n+zfceGEvUuC/qSdg4VpNG2mc/Dx7TEbzJ1r8s/kdBQZwbnQ3tH8Xa8ArJcFOOALO\ngtW2ueBqOijcnxJlyNzYfInITELrJt7itmjvW/P/6/MQ2vV8a/iOT5MEtCBIr9Ki\nA4WkpFtUXd0Vdn/6tQvKAzIYkWb5Y0Jq6cSjo0NdyAU1odl3v3uyRcdgCB07bCrD\nivk/WnyRbaowq6SnmQRy1jA1zQkJejJyW337N8md6sgEhOWcC2RDAgMBAAGjODA2\nMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBYGA1UdJQEB/wQMMAoGCCsG\nAQUFBwMCMA0GCSqGSIb3DQEBBQUAA4IBAQBh7tw75dc9TnNtiIlLjRvfAQlv99jv\nt8UXuXdDFxTa3/Qj4qd8JTfydcdaGNcYeiDum2SbFl3RXfm7S4l/iPVDa9SypwH4\nyPOb4CzrZKJ1+MYYGuVTAMI5iUtwZx/XoB/Xn+iSjsQzk2sg6ZugwoWJMTQmwvkT\ncsQtDhhj+XnoBUswG7NLf0ApUcgtx52QD1BFuf7AtOM3poL4huyp7a0deiI1UyJ1\n2mTDTqq678sGUDY7xHr4G0jwihSOqfqFRb2x9RyboZVe3Jpv8vebTFu60xdI3ezJ\nGar9rp/sncGWWMyyhaE2ZjQ2J5opOsvg7f7oPL398BAXwOSbMNTw7Hdx\n-----END CERTIFICATE-----\n"
 
 const app = express();
 
@@ -23,26 +28,56 @@ app.use(helmet());
 app.use(cors());
 
 app.use(userRouter);
+app.use(scheduleRouter);
 
 
-const pem = "-----BEGIN CERTIFICATE-----\nMIIDJjCCAg6gAwIBAgIIZ87kWVFIuvAwDQYJKoZIhvcNAQEFBQAwNjE0MDIGA1UE\nAxMrZmVkZXJhdGVkLXNpZ25vbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTAe\nFw0yMDEwMTUwNDI5NDVaFw0yMDEwMzExNjQ0NDVaMDYxNDAyBgNVBAMTK2ZlZGVy\nYXRlZC1zaWdub24uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wggEiMA0GCSqG\nSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCwckWwDEw3XpsthA8cH/JNFspg/cTAfhdg\nwKxkeWPFjWXHwb4r6N/OhlKdTsSwV2yXqHClt4p0LTPG3idMLtcACoKSCxwRnwom\nuvHIO7E0yG7dou9zx7hw0GteXWKNLEmmwToC9QAGOdIiANldHQy2Z+p7enQBN8Qm\nXoSxnpGb7+CrMHshGWKLESD4sultg3Q0pn2rgu7BhxRPUJrmXGVVktcXintnJtd6\nXBHmUHhExo8nhEsG1KRqBYQw12M6tUpgeNLrM6Ciu0idGPLjGII0Q3JB6eFYRZje\nSfp3RLapDIyQ0f9F64wulRf/5VbL9iX489uKHkI7aArb8636wTPXAgMBAAGjODA2\nMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBYGA1UdJQEB/wQMMAoGCCsG\nAQUFBwMCMA0GCSqGSIb3DQEBBQUAA4IBAQAgseaOrtf9/JWn++hbzt9qGVUFh3xg\nGMySX7W0S0H0QZ0JomFOdk0Kmo5IG5wY+idXVG3teVRNN7BMFnfUoB+DIZ+M/gGy\n6+f3q2JCMuR9wiPAk0DVwae39zeDtSjrdgrlVccIuCquxb0pzVcHZsrRN6iMjqTS\n8yYJsRe4uwR2lH+U3voDIFeLMtx6cqOCoE+RczWtt/QXw9BFf7ISITzkXRahR0t4\nlAT4sF2lHgVewxOzonkyGOz7v3GqwVKZTzNFmqtuxVZ/tOSUw48ogMvW0eNgfNY3\nPP1wq6nT3PISv/rg1bUSLnI7+0UMiqzN71qhCP3YVAm/KOBayne8C6/h\n-----END CERTIFICATE-----\n"
 
 app.get('/auth', function (req, res) {
-
-  //middleware auth - list out all of the urls that require authentication - make sure they go through the auth - also making sure expiration is up to date -if a function requires a specific user - authenticate - attach id to email - email from that user matches the user making the changes
+  console.log(req.get('Authorization'))
   jwt.verify(req.get('Authorization'), pem, { algorithms: ['RS256'] }, function (err, decoded) {
     if (err) {
      return console.error(err)
     };
-    console.log(decoded);
+    UserService.hasUserWithEmail(
+      req.app.get('db'),
+      decoded.email
+    )
+    .then(hasUserWithEmail => {
+    if (hasUserWithEmail != null) {
+      console.log(hasUserWithEmail)
+      jwtInitializeTime = new Date().getTime()
+  oneHour = 3600
+  jwtExpTime = jwtInitializeTime + oneHour
+  const payload = {
+      email: decoded.email,
+      name: decoded.given_name,
+      given_name: decoded.given_name,
+      iat: jwtInitializeTime,
+      exp: jwtExpTime
+  }
+  const tokenId = UserService.createJWT(payload)
+      return res
+              .status(200)
+              // .json({authToken: tokenId})
+              .json(serializeUser(hasUserWithEmail.user_id, hasUserWithEmail.user_name, hasUserWithEmail.user_email, tokenId))
+  } else {
+      const newUser = { user_id: uuidv4(), user_name: decoded.given_name, 
+        user_email: decoded.email, 
+        user_password:'google' }
+              UserService.insertUser(
+                  req.app.get('db'),
+                  newUser
+               ) }
   })
   
-  if (req.get('Authorization') != undefined) {
-    res.status(200).json()
-  } else {
-    res.status(401).json()
+  
+  if (req.get('Authorization') === null) {
+    return res.status(400).json({error: 'Unauthorized access'})
+  }
+
+
     
-}})
+})})
 
 app.use(function errorHandler(error, req, res, next) {
    let response
