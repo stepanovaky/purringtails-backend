@@ -14,14 +14,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "google-auth-library": "^6.1.2",
+    "google-oauth-jwt": "^0.2.0",
+    "googleapis": "^61.0.0",
     "helmet": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.7",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.4.1",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
