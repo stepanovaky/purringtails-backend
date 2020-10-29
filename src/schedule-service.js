@@ -1,5 +1,5 @@
 const knex = require('knex');
-const xss = require('xss'),
+const xss = require('xss');
 
 const ScheduleService = {
     getScheduleByScheduleId(knex, schedule_id) {
@@ -7,14 +7,13 @@ const ScheduleService = {
         .where({ schedule_id })
     },
     getScheduleByUserId(knex, user_id) {
-        return knex('schedule')
+        return knex('scheduled')
         .where({ user_id })
     },
     insertSchedule(knex, newSchedule) {
         return knex
         .insert(newSchedule)
-        .into('schedule')
-        .returning('user_id, schedule_id, scheduled_type, scheduled_date, scheduled_end_date')
+        .into('scheduled')
         .then(rows => {
             return rows[0]
         })
@@ -24,9 +23,9 @@ const ScheduleService = {
         .where({ schedule_id })
         .update(updateSchedule)
     },
-    deleteUser(knex, schedule_id) {
-        return knex('schedule')
-        .where({ schedule_id })
+    deleteSchedule(knex, scheduled_id) {
+        return knex('scheduled')
+        .where({ scheduled_id })
         .delete()
     }, serializeSchedule(userId, scheduledId, scheduledType, scheduledDate, scheduledEndDate='') {
         return {

@@ -13,7 +13,7 @@ const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*
 const UserService = {
     getUserById(knex, user_id) {
         return knex('users')
-        .where({ id })
+        .where({ user_id })
     },
     getUserByEmail(knex, user_email) {
         return knex('users')

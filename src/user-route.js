@@ -9,13 +9,13 @@ const jsonParser = express.json();
 userRouter
     .route('/api/userbyid')
     .get((req, res, next) => {
-        const { user_id } = req.body
+        const user = req.header('user');
         UserService.getUserById(
             req.app.get('db'),
-            user_id
+            user
         )
         .then(user => {
-            res.json(user)
+            console.log(user)
         })
         .catch(next)
     })
