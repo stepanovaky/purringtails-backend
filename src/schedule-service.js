@@ -35,6 +35,11 @@ const ScheduleService = {
             scheduled_date: xss(scheduledDate),
             scheduled_end_date: xss(scheduledEndDate)
         }
+    }, validateSchedule(knex, scheduled_date) {
+        return knex('scheduled')
+            .where({ scheduled_date })
+            .first()
+            .then(schedule => !!schedule)
     }
 }
 

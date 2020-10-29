@@ -12,12 +12,18 @@ scheduleRouter
     .post(jsonParser, (req, res, next) => {
         const { userId, service, startDate, endDate } = req.body;
         const newSchedule = ScheduleService.serializeSchedule(userId, uuidv4(), service, startDate, endDate)
+        console.log(newSchedule.scheduled_date)
+        ScheduleService.validateSchedule(
+            req.app.get('db'),
+            newSchedule.scheduled_date
+        )
+            .then(hasScheduleWithDate => {
+                return res.status(400({ error: 'Timeslot already taken, pleas choose a different time'}))})
         authenticateJWT(req.get('Authorization').split(' ')[1])
         ScheduleService.insertSchedule(
             req.app.get('db'),
             newSchedule
         )
-        console.log(newSchedule);
     })
     .get((req, res, next) => {
         const user = req.header('user');

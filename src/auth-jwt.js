@@ -7,7 +7,6 @@ function authenticateJWT (token) {
         if (err) {
          return console.error(err)
         };
-        console.log(decoded);
         
 
 })}

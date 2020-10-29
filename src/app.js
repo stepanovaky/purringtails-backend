@@ -44,7 +44,6 @@ app.get('/auth', function (req, res) {
     )
     .then(hasUserWithEmail => {
     if (hasUserWithEmail != null) {
-      console.log(hasUserWithEmail)
       jwtInitializeTime = new Date().getTime()
   oneHour = 3600
   jwtExpTime = jwtInitializeTime + oneHour
@@ -58,7 +57,6 @@ app.get('/auth', function (req, res) {
   const tokenId = UserService.createJWT(payload)
       return res
               .status(200)
-              // .json({authToken: tokenId})
               .json(serializeUser(hasUserWithEmail.user_id, hasUserWithEmail.user_name, hasUserWithEmail.user_email, tokenId))
   } else {
       const newUser = { user_id: uuidv4(), user_name: decoded.given_name, 
