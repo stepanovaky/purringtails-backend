@@ -4,16 +4,11 @@ const UserService = require('./user-service');
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cors = require('cors')
-
-const app = express();
-
-app.options('/api/user/google/login', cors())
 
 const userRouter = express.Router();
 const jsonParser = express.json();
 
-key =  "-----BEGIN CERTIFICATE-----\nMIIDJjCCAg6gAwIBAgIIF3cBaNBmfgUwDQYJKoZIhvcNAQEFBQAwNjE0MDIGA1UE\nAxMrZmVkZXJhdGVkLXNpZ25vbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTAe\nFw0yMDEwMzEwNDI5NDVaFw0yMDExMTYxNjQ0NDVaMDYxNDAyBgNVBAMTK2ZlZGVy\nYXRlZC1zaWdub24uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wggEiMA0GCSqG\nSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDj8inD/LNXc4HV9LieCecfZxEPLt1lME/x\nMRqomIgse97c/Zno1KBOv11ssJReM76nC3q390yzahU8N+kzwj7XSD1w76Bw8DlB\nPNMpweid53QH2nyPMQS9IMGV6PWofT5KAkyihCtslceNq0XhOIA5MIVP7JHA9txq\nvRBiG9RY1XnbGMS+PjIOeYrjbLzX0tjsfL4aTOTLiJX2aN/qoQWaXFONJ2rG5CjR\njrxgclksZLHetCY3Ni3RdjxKjdoYpfP+/iYweRmXraZAbHlT/zQuYH7ePpaMgleK\nUmaPWlsxToKnqxaMD2lOADEXksPPGmVemNBqzfe+wnmfXGyYbGmjAgMBAAGjODA2\nMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBYGA1UdJQEB/wQMMAoGCCsG\nAQUFBwMCMA0GCSqGSIb3DQEBBQUAA4IBAQC/S0gXu/ExGJsJjZhCcsl75dt97g+i\nxN6txB+PjqCxFNh7UXJzQbHdRXWzLGtYzE1ZObmDtq7YDi022/Hf4xXf/6ls4Szc\nShD7Nad+IXTdmX1lLiY4e+JLhHZ0H0gNhpZUpUAr7KzySgcfufxTH6N1FMtaCDOk\nf13ulQMCkThTTXzG7eQU2EuHnOMZJ/ttQ7O+XqhrlZT+tBdxKxmO6phZggRWWIh4\nzh/9H8a9+RcQc8MKQP1L/WEob42Q383OWUBuoKVveZXyDnIaz5EOqMIIILTAPXBO\nbasHfZtHjuH/Cjx2LWBLrl8tzasKPnYpl7NWWtT6/lH54L92uoyO4l66\n-----END CERTIFICATE-----\n"
+key = "-----BEGIN CERTIFICATE-----\nMIIDJjCCAg6gAwIBAgIIJd035gvRHpswDQYJKoZIhvcNAQEFBQAwNjE0MDIGA1UE\nAxMrZmVkZXJhdGVkLXNpZ25vbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTAe\nFw0yMDEwMjMwNDI5NDVaFw0yMDExMDgxNjQ0NDVaMDYxNDAyBgNVBAMTK2ZlZGVy\nYXRlZC1zaWdub24uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wggEiMA0GCSqG\nSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvVj+9WMlM2nCAoMXH/5am06q8E+KK8NTz\n+LkFGJUluU6sofmUzteEk79k/U0MCpYSYooD2PDfbVF7s8SiA+FJmrIIBKLC583r\n+zfceGEvUuC/qSdg4VpNG2mc/Dx7TEbzJ1r8s/kdBQZwbnQ3tH8Xa8ArJcFOOALO\ngtW2ueBqOijcnxJlyNzYfInITELrJt7itmjvW/P/6/MQ2vV8a/iOT5MEtCBIr9Ki\nA4WkpFtUXd0Vdn/6tQvKAzIYkWb5Y0Jq6cSjo0NdyAU1odl3v3uyRcdgCB07bCrD\nivk/WnyRbaowq6SnmQRy1jA1zQkJejJyW337N8md6sgEhOWcC2RDAgMBAAGjODA2\nMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgeAMBYGA1UdJQEB/wQMMAoGCCsG\nAQUFBwMCMA0GCSqGSIb3DQEBBQUAA4IBAQBh7tw75dc9TnNtiIlLjRvfAQlv99jv\nt8UXuXdDFxTa3/Qj4qd8JTfydcdaGNcYeiDum2SbFl3RXfm7S4l/iPVDa9SypwH4\nyPOb4CzrZKJ1+MYYGuVTAMI5iUtwZx/XoB/Xn+iSjsQzk2sg6ZugwoWJMTQmwvkT\ncsQtDhhj+XnoBUswG7NLf0ApUcgtx52QD1BFuf7AtOM3poL4huyp7a0deiI1UyJ1\n2mTDTqq678sGUDY7xHr4G0jwihSOqfqFRb2x9RyboZVe3Jpv8vebTFu60xdI3ezJ\nGar9rp/sncGWWMyyhaE2ZjQ2J5opOsvg7f7oPL398BAXwOSbMNTw7Hdx\n-----END CERTIFICATE-----\n"
 userRouter
     .route('/api/userbyid')
     .get((req, res, next) => {
@@ -149,7 +144,6 @@ userRouter
                 )
                 
         })
-        // "https://purringtails-backend.herokuapp.com/api/user/google/login",
 
         userRouter
             .route('/api/user/google/login')
