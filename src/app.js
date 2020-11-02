@@ -3,14 +3,10 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const jwt = require('jsonwebtoken');
 const { DATABASE_URL } = require('./config');
 const knex = require('knex');
 const userRouter = require('./user-route');
 const { NODE_ENV } = require('./config')
-const UserService = require('./user-service');
-const { v4: uuidv4 } = require('uuid');
-const { serializeUser } = require('./user-service');
 const scheduleRouter = require('./schedule-route')
 
 
@@ -32,50 +28,7 @@ app.use(scheduleRouter);
 
 
 
-app.get('/auth', function (req, res) {
-  console.log(req.get('Authorization'))
-  jwt.verify(req.get('Authorization'), pem, { algorithms: ['RS256'] }, function (err, decoded) {
-    if (err) {
-     return console.error(err)
-    };
-    UserService.hasUserWithEmail(
-      req.app.get('db'),
-      decoded.email
-    )
-    .then(hasUserWithEmail => {
-    if (hasUserWithEmail != null) {
-      jwtInitializeTime = new Date().getTime()
-  oneHour = 3600
-  jwtExpTime = jwtInitializeTime + oneHour
-  const payload = {
-      email: decoded.email,
-      name: decoded.given_name,
-      given_name: decoded.given_name,
-      iat: jwtInitializeTime,
-      exp: jwtExpTime
-  }
-  const tokenId = UserService.createJWT(payload)
-      return res
-              .status(200)
-              .json(serializeUser(hasUserWithEmail.user_id, hasUserWithEmail.user_name, hasUserWithEmail.user_email, tokenId))
-  } else {
-      const newUser = { user_id: uuidv4(), user_name: decoded.given_name, 
-        user_email: decoded.email, 
-        user_password:'google' }
-              UserService.insertUser(
-                  req.app.get('db'),
-                  newUser
-               ) }
-  })
-  
-  
-  if (req.get('Authorization') === null) {
-    return res.status(400).json({error: 'Unauthorized access'})
-  }
 
-
-    
-})})
 
 app.use(function errorHandler(error, req, res, next) {
    let response

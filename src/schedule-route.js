@@ -9,7 +9,7 @@ const jsonParser = express.json();
 
 scheduleRouter
     .route('/api/schedule')
-    .post(jsonParser, (req, res, next) => {
+    .post(jsonParser, authenticateJWT, (req, res, next) => {
         const { userId, service, startDate, endDate } = req.body;
         const newSchedule = ScheduleService.serializeSchedule(userId, uuidv4(), service, startDate, endDate)
         console.log(newSchedule.scheduled_date)
@@ -18,14 +18,24 @@ scheduleRouter
             newSchedule.scheduled_date
         )
             .then(hasScheduleWithDate => {
-                return res.status(400({ error: 'Timeslot already taken, pleas choose a different time'}))})
-        authenticateJWT(req.get('Authorization').split(' ')[1])
-        ScheduleService.insertSchedule(
-            req.app.get('db'),
-            newSchedule
-        )
+                if (hasScheduleWithDate) {
+                console.log(hasScheduleWithDate)
+                return res.status(400).json({ error: 'Timeslot already taken, please choose a different time'})}
+            
+                else {
+                    // authenticateJWT(req.get('Authorization').split(' ')[1])
+                    ScheduleService.insertSchedule(
+                        req.app.get('db'),
+                        newSchedule
+                    )
+
+                }
+            
+            }
+                )
+       
     })
-    .get((req, res, next) => {
+    .get(authenticateJWT, (req, res, next) => {
         const user = req.header('user');
         ScheduleService.getScheduleByUserId(
             req.app.get('db'),
@@ -36,7 +46,7 @@ scheduleRouter
         })
         .catch(next)
     })
-    .delete(jsonParser, (req, res, next) => {
+    .delete(jsonParser, authenticateJWT, (req, res, next) => {
         const sched = req.header('sched');
         ScheduleService.deleteSchedule(
             req.app.get('db'),
