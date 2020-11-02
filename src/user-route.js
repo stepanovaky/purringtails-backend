@@ -114,7 +114,7 @@ userRouter
                         return res.status(400).json({
                             error: 'Incorrect username or password'
                         })
-                    
+                    console.log(user)
                         UserService.comparePassword(loginUser.userPassword, user[0].user_password)
                         .then(compareMatch => {
                             if (!compareMatch)
