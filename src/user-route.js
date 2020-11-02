@@ -4,6 +4,7 @@ const UserService = require('./user-service');
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cors = requir('cors')
 
 const userRouter = express.Router();
 const jsonParser = express.json();
@@ -147,7 +148,7 @@ userRouter
 
         userRouter
             .route('/api/user/google/login')
-            .get((req, res) => {
+            .get(cors(), (req, res) => {
 
                 jwt.verify(req.get('Authorization').split(' ')[1], key, { algorithms: ['RS256']}, function(err, decoded) {
                     if (err) {

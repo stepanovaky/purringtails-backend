@@ -26,7 +26,7 @@ app.use(cors());
 app.use(userRouter);
 app.use(scheduleRouter);
 
-
+// const corsOptions = { origin: 'https://purringtails-frontend.vercel.app'}
 
 
 
