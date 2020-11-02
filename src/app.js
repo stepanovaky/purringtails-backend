@@ -8,6 +8,7 @@ const knex = require('knex');
 const userRouter = require('./user-route');
 const { NODE_ENV } = require('./config')
 const scheduleRouter = require('./schedule-route')
+const healthRouter = require('./health-route')
 
 
 
@@ -24,6 +25,7 @@ app.use(cors());
 
 app.use(userRouter);
 app.use(scheduleRouter);
+app.use(healthRouter);
 
 // const corsOptions = { origin: 'https://purringtails-frontend.vercel.app'}
 
