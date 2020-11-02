@@ -25,7 +25,7 @@ app.use(cors());
 
 app.use(userRouter);
 app.use(scheduleRouter);
-app.use(healthRouter);
+app.use(healthRouter); 
 
 // const corsOptions = { origin: 'https://purringtails-frontend.vercel.app'}
 
