@@ -105,6 +105,7 @@ userRouter
             .toString()
             .split(':')
             const loginUser = { userEmail, userPassword}
+            console.log(loginUser)
             UserService.checkForEmail(
                 req.app.get('db'),
                 loginUser.userEmail
