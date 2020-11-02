@@ -6,6 +6,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = requir('cors')
 
+const app = express();
+
+app.options('/api/user/google/login', cors())
+
 const userRouter = express.Router();
 const jsonParser = express.json();
 
