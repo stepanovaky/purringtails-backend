@@ -111,7 +111,7 @@ userRouter
                 loginUser.userEmail
             )
                 .then(user => {
-                    if (!user)
+                    if (user == null)
                         return res.status(400).json({
                             error: 'Incorrect username or password'
                         })
