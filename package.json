@@ -1,6 +1,9 @@
 {
   "name": "purring-tails-backend",
   "version": "1.0.0",
+  "engines" : {
+    "node": "v12.18.0"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
