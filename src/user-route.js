@@ -111,12 +111,11 @@ userRouter
                 loginUser.userEmail
             )
                 .then(user => {
-                    if (user == null)
+                    if (user == null) {
                         return res.status(400).json({
                             error: 'Incorrect username or password'
-                        })
-                    console.log(user)
-                        UserService.comparePassword(loginUser.userPassword, user[0].user_password)
+                        })} else {
+                            UserService.comparePassword(loginUser.userPassword, user[0].user_password)
                         .then(compareMatch => {
                             if (!compareMatch)
                             return res.status(400).json({
@@ -142,7 +141,37 @@ userRouter
                     
                         
                     }
-                )
+                
+
+                        })
+                    // console.log(user)
+                //         UserService.comparePassword(loginUser.userPassword, user[0].user_password)
+                //         .then(compareMatch => {
+                //             if (!compareMatch)
+                //             return res.status(400).json({
+                //                 error: 'Incorrect user_name or password'
+                //             })
+                    
+                //     })
+                //     jwtInitializeTime = new Date().getTime()
+                //     oneHour = 3600
+                //     jwtExpTime = jwtInitializeTime + oneHour
+                //     const payload = {
+                //         email: user[0].user_email,
+                //         name: user[0].user_name,
+                //         given_name: user[0].user_name,
+                //         iat: jwtInitializeTime,
+                //         exp: jwtExpTime
+                //     }
+                //     const tokenId = UserService.createJWT(payload);
+                //     res
+                //         .status(200)
+                //         .set({authToken: UserService.createJWT(payload)})
+                //         .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email))
+                    
+                        
+                //     }
+                // )
                 
         })
 
