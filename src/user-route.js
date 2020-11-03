@@ -133,11 +133,11 @@ userRouter
                         iat: jwtInitializeTime,
                         exp: jwtExpTime
                     }
-                    // const tokenId = UserService.createJWT(payload);
+                    const tokenId = UserService.createJWT(payload);
                     res
                         .status(200)
-                        .set({authToken: UserService.createJWT(payload)})
-                        .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email), {authToken: UserService.createJWT(payload)})
+                        // .set({authToken: UserService.createJWT(payload)})
+                        .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email, tokenId))
                     
                         
                     }
