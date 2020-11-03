@@ -37,7 +37,6 @@ scheduleRouter
     })
     .get(authenticateJWT, (req, res, next) => {
         const user = req.header('user');
-        console.log(user);
         ScheduleService.getScheduleByUserId(
             req.app.get('db'),
             user
