@@ -19,12 +19,10 @@ scheduleRouter
         )
             .then(hasScheduleWithDate => {
                 if (hasScheduleWithDate) {
-                console.log(hasScheduleWithDate)
                 return res.status(400).json({ error: 'Timeslot already taken, please choose a different time'})}
             
                 else {
-                    // authenticateJWT(req.get('Authorization').split(' ')[1])
-                    ScheduleService.insertSchedule(
+                     ScheduleService.insertSchedule(
                         req.app.get('db'),
                         newSchedule
                     )
