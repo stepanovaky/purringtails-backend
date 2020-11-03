@@ -28,6 +28,7 @@ scheduleRouter
                         req.app.get('db'),
                         newSchedule
                     )
+                    return res.status(200)
 
                 }
             
