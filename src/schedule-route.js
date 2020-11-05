@@ -22,11 +22,11 @@ scheduleRouter
                 return res.status(400).json({ error: 'Timeslot already taken, please choose a different time'})}
             
                 else {
-                     ScheduleService.insertSchedule(
+                     return ScheduleService.insertSchedule(
                         req.app.get('db'),
                         newSchedule
-                    )
-                    return res.status(200)
+                    ).then(() => res.status(200) )
+                    // return res.status(200)
 
                 }
             
