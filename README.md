@@ -1,26 +1,81 @@
-# Express Boilerplate!
+# Purring Tails API
 
-This is a boilerplate project used for starting new projects!
+This API uses GET, POST, and DELETE requests to communicate and HTTP response codes to indicate status and errors. 
 
-## Set up
+## Response Codes
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+- 200: Success
+- 201: Created
+- 204: Success
+- 400: Bad Request
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+## Login
 
-## Scripts
+**You send:** Your login credentials encrypted with base64. **You get:** A JWT-token with which you can make further actions. 
 
-Start the application `npm start`
+### Request
 
-Start nodemon for the application `npm run dev`
+POST /api/user/email/login
 
-Run the tests `npm test`
+### Response
 
-## Deploying
+Status: 200
+[User Id, User's Name, User Email, User's hashed password, JWT token]
+Status: 400
+[Incorrect email or password] OR [Missing Authorization in request heqader]
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## Registration
+
+**You send:** Your name, email, and password encrypted with base64. **You get:** A 201 status that a new user has been created. 
+
+### Request
+
+POST /api/user
+
+### Response
+
+Status: 201
+[Created]
+Status: 400
+[Missing User's Name or Authorization Token in request body] OR [User email already taken]
+
+## List future services scheduled by user
+
+**You send:** User email with JWT token. **You get:** A list of user specific scheduled services
+
+### Request
+
+GET /api/schedule
+
+### Response
+
+[A list of user specific scheduled services]
+
+## Schedule new service
+**You send:** User ID, service type, the start date of service, the end date of service (if applicable) and JWT token. 
+**You get:** A status response that the service was created
+
+### Request
+
+POST /api/schedule
+
+### Response
+
+Status: 200
+[OK]
+Status:400
+[Timeslot already taken]
+
+## Delete Service
+
+**You send:** The ID of the service to be deleted. **You get:** Status code 204 that it was successfully deleted. 
+
+### Request
+
+DELETE /api/schedule
+
+### Response
+
+Status: 204
+[Success]
+

@@ -3,7 +3,6 @@ const express = require('express');
 const UserService = require('./user-service');
 const { v4: uuidv4 } = require('uuid')
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const userRouter = express.Router();
 const jsonParser = express.json();
@@ -119,7 +118,7 @@ userRouter
                         .then(compareMatch => {
                             if (!compareMatch)
                             return res.status(400).json({
-                                error: 'Incorrect user_name or password'
+                                error: 'Incorrect email or password'
                             })
                     
                     })
@@ -136,7 +135,6 @@ userRouter
                     const tokenId = UserService.createJWT(payload);
                     res
                         .status(200)
-                        // .set({authToken: UserService.createJWT(payload)})
                         .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email, tokenId))
                     
                         
@@ -144,80 +142,10 @@ userRouter
                 
 
                         })
-                    // console.log(user)
-                //         UserService.comparePassword(loginUser.userPassword, user[0].user_password)
-                //         .then(compareMatch => {
-                //             if (!compareMatch)
-                //             return res.status(400).json({
-                //                 error: 'Incorrect user_name or password'
-                //             })
                     
-                //     })
-                //     jwtInitializeTime = new Date().getTime()
-                //     oneHour = 3600
-                //     jwtExpTime = jwtInitializeTime + oneHour
-                //     const payload = {
-                //         email: user[0].user_email,
-                //         name: user[0].user_name,
-                //         given_name: user[0].user_name,
-                //         iat: jwtInitializeTime,
-                //         exp: jwtExpTime
-                //     }
-                //     const tokenId = UserService.createJWT(payload);
-                //     res
-                //         .status(200)
-                //         .set({authToken: UserService.createJWT(payload)})
-                //         .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email))
-                    
-                        
-                //     }
-                // )
-                
         })
 
-//         userRouter
-//             .route('/api/user/google/login')
-//             .get((req, res) => {
 
-//                 jwt.verify(req.get('Authorization').split(' ')[1], key, { algorithms: ['RS256']}, function(err, decoded) {
-//                     if (err) {
-//                         return console.error(err)
-//                     };
-//                     UserService.hasUserWithEmail(
-//                         req.app.get('db'),
-//                         decoded.email
-//                     )
-//                     .then(hasUserWithEmail => {
-//                         if (hasUserWithEmail != null) {
-//                             jwtInitializeTime = new Date().getTime()
-//   oneHour = 3600
-//   jwtExpTime = jwtInitializeTime + oneHour
-//   const payload = {
-//       email: decoded.email,
-//       name: decoded.given_name,
-//       given_name: decoded.given_name,
-//       iat: jwtInitializeTime,
-//       exp: jwtExpTime
-//                         }
-//                         const tokenId = UserService.createJWT(payload)
-//       return res
-//               .status(200)
-//               .json(UserService.serializeUser(hasUserWithEmail.user_id, hasUserWithEmail.user_name, hasUserWithEmail.user_email, tokenId))
-//   } else {
-//       const newUser = { user_id: uuidv4(), user_name: decoded.given_name, 
-//         user_email: decoded.email, 
-//         user_password:'google' }
-//               UserService.insertUser(
-//                   req.app.get('db'),
-//                   newUser
-//                ) }
-//                if (req.get('Authorization') === null) {
-//                 return res.status(400).json({error: 'Unauthorized access'})
-//               }
-
-//                 })
-//                 })}
-//             )
         
 
     
