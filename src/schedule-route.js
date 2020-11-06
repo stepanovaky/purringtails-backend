@@ -8,6 +8,19 @@ const scheduleRouter = express.Router();
 const jsonParser = express.json();
 
 scheduleRouter
+    .route('/api/schedule/all')
+    .get(authenticateJWT, (req, res, next) => {
+        ScheduleService.getAllSchedules (
+            req.app.get('db')
+        )
+            .then(schedules => {
+                res.status(200)
+                res.json(schedules)
+            })
+
+    })
+
+scheduleRouter
     .route('/api/schedule')
     .post(jsonParser, authenticateJWT, (req, res, next) => {
         const { userId, service, startDate, endDate } = req.body;
@@ -26,7 +39,6 @@ scheduleRouter
                         req.app.get('db'),
                         newSchedule
                     ).then(() => res.status(200) )
-                    // return res.status(200)
 
                 }
             

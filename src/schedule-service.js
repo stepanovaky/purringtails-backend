@@ -18,10 +18,10 @@ const ScheduleService = {
             return rows[0]
         })
     },
-    updateUser(knex, schedule_id, updateSchedule) {
-        return knex('schedule')
-        .where({ schedule_id })
-        .update(updateSchedule)
+    getAllSchedules(knex) {
+        return knex
+            .select('*')
+            .from('scheduled');
     },
     deleteSchedule(knex, scheduled_id) {
         return knex('scheduled')

@@ -15,10 +15,6 @@ const UserService = {
         return knex('users')
         .where({ user_id })
     },
-    getUserByEmail(knex, user_email) {
-        return knex('users')
-        .where({ user_email })
-    },
     insertUser(knex, newUser) {
         return knex
         .insert(newUser)
@@ -27,16 +23,6 @@ const UserService = {
         .then(rows => {
             return rows[0]
         })
-    },
-    updateUser(knex, id, updateUser) {
-        return knex('users')
-        .where({ id })
-        .update(updateUser)
-    },
-    deleteUser(knex, id) {
-        return knex('users')
-        .where({ id })
-        .delete()
     },
     validatePassword(password) {
         if (password.length < 8) {
@@ -61,16 +47,13 @@ const UserService = {
     },
     comparePassword(user_password, userComparePassword) {
         return bcrypt.compare(user_password, userComparePassword)
-        
-
-            
-        
-
-    }, checkForEmail(db, user_email) {
+    },
+     checkForEmail(db, user_email) {
         return db ('users')
             .where({ user_email })
             .returning('user_id', 'user_name', 'user_email', 'user_password')
-    }, createJWT(payload) {
+    },
+     createJWT(payload) {
         return jwt.sign(payload, process.env.KEY)
 
     }, serializeUser (userId, userName, userEmail, tokenId) {

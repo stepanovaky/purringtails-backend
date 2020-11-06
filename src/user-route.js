@@ -7,33 +7,6 @@ const bcrypt = require('bcryptjs');
 const userRouter = express.Router();
 const jsonParser = express.json();
 
-userRouter
-    .route('/api/userbyid')
-    .get((req, res, next) => {
-        const user = req.header('user');
-        UserService.getUserById(
-            req.app.get('db'),
-            user
-        )
-        .then(user => {
-            console.log(user)
-        })
-        .catch(next)
-    })
-
-userRouter
-    .route('/api/userbyemail')
-    .get((req, res, next) => {
-        const { user_email } = req.body
-        UserService.getUserByEmail(
-            req.app.get('db'),
-            user_email
-        )
-        .then(user => {
-            res.json(user)
-        })
-        .catch(next)
-    })
 
 userRouter
     .route('/api/user')
