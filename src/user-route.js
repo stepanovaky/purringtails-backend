@@ -76,46 +76,29 @@ userRouter
             .toString()
             .split(':')
             const loginUser = { userEmail, userPassword}
-            console.log(loginUser)
-            UserService.checkForEmail(
-                req.app.get('db'),
-                loginUser.userEmail
-            )
-                .then(user => {
-                    console.log(user);
-                    if (user === []) {
-                        return res.status(400).json({
-                            error: 'Incorrect username or password'
-                        })} else {
-                            UserService.comparePassword(loginUser.userPassword, user[0].user_password)
-                        .then(compareMatch => {
-                            if (!compareMatch)
-                            return res.status(400).json({
-                                error: 'Incorrect email or password'
-                            })
-                    
-                    })
-                    jwtInitializeTime = new Date().getTime()
-                    oneHour = 3600
-                    jwtExpTime = jwtInitializeTime + oneHour
-                    const payload = {
-                        email: user[0].user_email,
-                        name: user[0].user_name,
-                        given_name: user[0].user_name,
-                        iat: jwtInitializeTime,
-                        exp: jwtExpTime
-                    }
-                    const tokenId = UserService.createJWT(payload);
-                    res
-                        .status(200)
-                        .json(UserService.serializeUser(user[0].user_id, user[0].user_name, user[0].user_email, tokenId))
-                    
-                        
-                    }
-                
-
-                        })
-                    
+           UserService.checkForEmail(
+               req.app.get('db'),
+               loginUser.userEmail
+           )
+           .then(user => {
+               if (!user) {
+                   console.log(user)
+                   return res.status(400).json({
+                       error: 'Incorrect email or password'
+                   })
+               } 
+               return UserService.comparePassword(loginUser.userPassword, user.user_password)
+               .then(passwordsMatch => {
+                   if (!passwordsMatch) {
+                       return res.status(401).json({ error: 'Unauthorized request' })
+                   }
+                   const payload = {id: user.user_id, email: user.user_email, name: user.user_name}
+                   res.status(200).send({
+                       authToken: UserService.createJWT(payload), id: user.user_id, email: user.user_email, name: user.user_name
+                   })
+               })
+               
+           })
         })
 
 

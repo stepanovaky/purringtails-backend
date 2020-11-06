@@ -1,7 +1,10 @@
 const { expect } = require('chai');
-const { auth } = require('google-auth-library');
+const assert = require('assert');
 const supertest = require('supertest');
 const app = require('../src/app')
+const UserService = require('../src/user-service')
+
+
 
 describe('Schedule endpoints', () => {
     it('should return a message from GET /health', () => {
@@ -16,40 +19,37 @@ describe('Schedule endpoints', () => {
         .expect(200)
         .expect('Content-Type', /json/)
     })
-    it('should post a new schedule', () => {
-        return supertest(app)
-        .post('/api/schedule')
-        .set('Authorization', 'bearer '+`${process.env.TestJWT}`)
-    })
+    
     it('should return an array of schedules based on user id', () => {
+        const user = {user: "d2c25821-81e7-4f33-a2a4-822051c61863"}
         return supertest(app)
         .get('/api/schedule')
         .set('Authorization', 'bearer '+`${process.env.TestJWT}`)
-    })
-    it('should delete given schedule based on schedule id', () => {
-        return supertest(app)
-        .delete('/api/schedule')
-        .set('Authorization', 'bearer '+`${process.env.TestJWT}`)
+        .set(user)
+        .expect(200)
     })
 })
+
 
 describe('User endpoints', () => {
     it('throws error when trying to register user with email already in the database', () => {
         const newUser = { authToken: "dGVzdEBnbWFpbC5jb206VGVzdGluZzEyMw==", givenName:"dGVzdA==" }
         return supertest(app)
         .post('/api/user')
-        .set(newUser)
-        .expect(400, 'message')
-        .end();
-
-       
+        .send(newUser)
+        .expect(400, '{"error":"User email already taken"}')
         
     })
-    it('returns JWT token when user logs in', () => {
+    it('throws error when authorization is missing', () => {
         return supertest(app)
         .post('/api/user/email/login')
-        .set('authToken', "dGVzdEBnbWFpbC5jb206VGVzdGluZzEyMw==")
-        .expect(200)
+        .expect(400, `{"error":"Missing 'authorization' in request header"}`)
     })
+    
+        
+        })
+        
+        
+        
+    
 
-})

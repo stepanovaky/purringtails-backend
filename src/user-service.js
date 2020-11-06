@@ -49,9 +49,10 @@ const UserService = {
         return bcrypt.compare(user_password, userComparePassword)
     },
      checkForEmail(db, user_email) {
+         console.log(user_email)
         return db ('users')
-            .where({ user_email })
-            .returning('user_id', 'user_name', 'user_email', 'user_password')
+        .where({user_email})
+        .first()
     },
      createJWT(payload) {
         return jwt.sign(payload, process.env.KEY)
