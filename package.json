@@ -36,6 +36,9 @@
     "uuid": "^8.3.1",
     "xss": "^1.0.8"
   },
+  "prettier": {
+    "singleQuote": false
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^8.2.1",

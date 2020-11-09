@@ -1,3 +1,7 @@
+Link to live app: https://purringtails-frontend-fizfvgpo4.vercel.app/login
+Link to frontend github repo: https://github.com/stepanovaky/purringtails-frontend
+
+
 # Purring Tails API
 
 This API uses GET, POST, and DELETE requests to communicate and HTTP response codes to indicate status and errors. 
